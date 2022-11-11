@@ -6,6 +6,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.project1.exceptions.InvalidCredentialsException;
 import com.project1.models.User;
 import com.project1.services.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -48,10 +49,18 @@ public class UserController {
 	public Handler handleLogin = (context) -> {
 		Map<String, String> body = objectMapper.readValue(context.body(), LinkedHashMap.class);
 		
-		User loggedIn = uServ.loginUser(body.get("email"), body.get("password"));
+		//User loggedIn = uServ.loginUser(body.get("email"), body.get("password"));
 		
-		context.status(200);
-		context.result(objectMapper.writeValueAsString(loggedIn));
+	
+		
+		try { User loggedIn = uServ.loginUser(body.get("email"), body.get("password"));
+			context.status(200);
+			context.result(objectMapper.writeValueAsString(loggedIn));
+		} catch (InvalidCredentialsException e) {
+			context.status(401);
+			context.result("Invalid Password");
+			e.printStackTrace();
+		}
 		
 		//Inside of the login, we probably want to store the users information inside of a cookie using 
 		//the session api

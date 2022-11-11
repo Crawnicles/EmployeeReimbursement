@@ -25,11 +25,13 @@ public class TicketService {
 	
 	
 	public void updateTicket(Ticket t) {
+		
 		/*
 		if(t.getStatus().equals(TicketStatus.APPROVED) || t.getStatus().equals(TicketStatus.DENIED)) {
 			throw new TicketAlreadyProcessedException();
 		}
 		*/
+	
 		//add a current status and compare to a new status
 		tDao.updateTicket(t);
 		LoggingUtil.getLogger().info("Ticket was updated!" + t);
@@ -59,6 +61,10 @@ public class TicketService {
 	
 	public List<Ticket> getTicketByStatus(TicketStatus status) {
 		return tDao.getTicketByStatus(status);
+	}
+	
+	public Ticket getTicketByID(int ticketId) {
+		return tDao.getTicketById(ticketId);
 	}
 
 }

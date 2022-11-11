@@ -20,9 +20,12 @@ public class ExpenseReimbursementDriver {
 
 	public static void main(String args[]) {
 		
+		
+		//Controller connect to the Service, 
 		UserDao uDao = new UserDaoJDBC();
 		UserService uServ = new UserService(uDao);
 		UserController uController = new UserController(uServ);
+		
 		TicketDao tDao = new TicketDaoJDBC();
 		TicketService tServ = new TicketService(tDao);
 		TicketController tController = new TicketController(tServ);
@@ -37,24 +40,27 @@ public class ExpenseReimbursementDriver {
 		
 		//uDao.addUser(new User(UserRole.EMPLOYEE, "Andrew", "Crawford", "andrew@mail.com", "password"));
 		
+		
+		// User Endpoints
 		app.get("/hello", (ctx) -> ctx.result("Hello, we are making our first get request"));
 		app.post("/user/register", uController.handleRegister);
 		app.get("user/", uController.handleGetAllUsers);
 		app.post("/user/login", uController.handleLogin);
+		
+		// Future Upgrades
 		//app.delete("/user/", uController.handleDelete);
-		//app.put("/user/", uController.handleDelete);
 		//app.put("/user/", uController.handleUpdate);
-		//app.get("/user/session", uController.han)
+		//app.get("/user/session", uController.handleSession);
 		
 		
 		app.post("/ticket/create", tController.handleCreate);
-
+		app.put("/ticket/update", tController.handleUpdate);
 		//app.post("/ticket/status", tController.getTicketByStatus);
 		//app.get("/ticket", tController.handleRead);
-		app.put("/ticket/update", tController.handleUpdate);
 		
 		
 		//We can also register handlers to deal with exceptions
+		
 		app.exception(UserDoesNotExistException.class, (e, context) -> {
 			context.status(401);
 			context.result("You were unable to login, User does not exist");
@@ -68,9 +74,7 @@ public class ExpenseReimbursementDriver {
 		app.exception(TicketAlreadyProcessedException.class, (e, context) -> {
 			context.status(409);
 			context.result("Ticket already processed");
-		});
-		
-		
+		});		
 		app.start(8000);
 		
 	}

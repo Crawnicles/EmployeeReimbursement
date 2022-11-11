@@ -233,6 +233,43 @@ public class TicketDaoJDBC implements TicketDao {
 		}
 		
 	}
+	
+	@Override
+	public Ticket getTicketById(int ticketId) {
+		//Ticket t = null;
+		
+		try { 
+			Connection connection = conUtil.getConnection();
+			String sql = "SELECT * FROM tickets WHERE ticketid = " + ticketId;
+			Statement statement = connection.createStatement();
+			ResultSet result = statement.executeQuery(sql);
+		
+			while(result.next()) {
+					if(result.getInt(1) == ticketId) {
+						Ticket t = new Ticket();
+						t.setTicketId(result.getInt(1));
+						t.setEmployeeId(result.getInt(2));
+						t.setDescription(result.getString(3));
+						t.setAmount(result.getDouble(4));
+						if(result.getInt(5)  == 1) {
+							t.setStatus(TicketStatus.PENDING);
+						} else if(result.getInt(5) == 2) {
+							t.setStatus(TicketStatus.APPROVED);
+						} else {
+							t.setStatus(TicketStatus.DENIED);
+						}
+				
+						return t;
+					}
+				
+				} 
+			
+		} catch(SQLException e) {
+			e.printStackTrace();
+		}
+	
+		return null;
+	}
 
 }
 

@@ -8,6 +8,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.project1.exceptions.UserAlreadyExistsException;
 import com.project1.models.User;
 import com.project1.models.UserRole;
 import com.project1.utils.JDBCConnectionUtil;
@@ -64,7 +65,11 @@ public class UserDaoJDBC  implements UserDao {
 			
 		} catch (SQLException e) {
 			e.printStackTrace();
+			throw new UserAlreadyExistsException();
 		}
+		
+		//either do a throws route, and handle it in userv and ucontr
+		//or if you throw a new user exists in the dao - it'll be caught by the 
 	}
 	
 

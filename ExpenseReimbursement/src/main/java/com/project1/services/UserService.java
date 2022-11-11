@@ -39,14 +39,27 @@ public class UserService {
 	}
 		
 		*/
-	public void registerUser(User u) {
+	public void registerUser(User u) throws Exception {
+		
+		 List<User> uList = new ArrayList<>();
+		 
+		 uList = userDao.getAllUsers();
+		 
+		 for (User listUser : uList) {
+		 			if (listUser.getEmail().equals(u.getEmail())) {
+		 					throw new UserAlreadyExistsException();
+		 			}
+		 }
+		 
+		 userDao.registerUser(u);
+		/*
 		try{
 			userDao.registerUser(u);
 			LoggingUtil.getLogger().warn("User: " + u + "was registered");
 		} catch(Exception e) {
 			LoggingUtil.getLogger().warn("User with email" + u.getEmail() + "tried to register a second time");
 			throw new UserAlreadyExistsException();
-		} 
+		} */
 	}
 	
 	public List<User> getAllUsers() {
@@ -56,17 +69,28 @@ public class UserService {
 	
 
 	public User loginUser(String email, String password) { 
+		/*
+		User u = null;
+		
+		try {
+			u =userDao.getUserByEmail(email);
+			u.getPassword().equals(password);
+		} catch (UserDoesNotExistException e) {
+			e.printStackTrace();
+		} catch (InvalidCredentialsException e) {
+			e.printStackTrace();
+		}
+		return u;
+		*/
+		
 		User u = userDao.getUserByEmail(email);
 		
-		
 		if(u == null) {
-			//LoggingUtil.getLogger().warn("User with email" + email + " had a failed login attempt");
+			LoggingUtil.getLogger().warn("Invalid email" + email);
 			throw new UserDoesNotExistException();
-		} 
-		
-		if(u.getPassword().equals(password)) {
+		} else if(u.getPassword().equals(password)) {
 			return u;
-		} else {
+		} else  {
 			throw new InvalidCredentialsException();
 		}
 		

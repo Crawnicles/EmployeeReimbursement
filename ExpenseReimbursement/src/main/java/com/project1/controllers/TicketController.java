@@ -6,8 +6,11 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.project1.exceptions.InvalidCredentialsException;
+import com.project1.exceptions.TicketAlreadyProcessedException;
 import com.project1.models.Ticket;
 import com.project1.models.TicketStatus;
+import com.project1.models.User;
 import com.project1.services.TicketService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -41,8 +44,38 @@ public class TicketController {
 		context.result(om.writeValueAsString(tList));
 	};
 	
+
+	public Handler handleUpdate = (context) -> {
+		Ticket t = om.readValue(context.body(), Ticket.class);
+		
+		System.out.println(t);
+		tServ.updateTicket(t);
+		
+		context.status(200);
+		context.result("Ticket was updated ");
+		//check the ticket before passing it in
+		
+		/*
+		//Use a getTicketById method to get the ticket you want, then pass it to the try catch block
+		System.out.println(t);
+		try {
+			if(t.getStatus().equals(TicketStatus.APPROVED) || t.getStatus().equals(TicketStatus.DENIED)) {
+			throw new TicketAlreadyProcessedException();
+			}
+		} catch (TicketAlreadyProcessedException e) {
+		context.status(401);
+		context.result("Ticket was already processed");
+		e.printStackTrace();
+		return;
+		}
+		//not returning out of catch block
+		*/
+
+	
+	};
 	
 	
+	/*
 	public Handler getTicketByStatus = (context) -> {
 		HashMap<String, String> body = om.readValue(context.body(), LinkedHashMap.class);
 
@@ -75,20 +108,26 @@ public class TicketController {
 		//context.result(om.writeValueAsString(tList));
 	};
 	
+	*/
 	
-	public Handler handleUpdate = (context) -> {
-		Ticket t = om.readValue(context.body(), Ticket.class);
-		System.out.println(t);
-		tServ.updateTicket(t);
+	/*	
+	public Handler handleUdpate1 = (context) -> {
+		HashMap<String, Integer> body = om.readValue(context.body(), LinkedHashMap.class);
 		
-		context.status(200);
-		context.result("Ticket was updated ");
+		Ticket t = tServ.getTicketByID(body.get("id"));
+		if(t.getStatus().equals(TicketStatus.PENDING)) {
+			tServ.approveTicket(body.get("id"));
+			context.status(200);
+			context.result("Ticket " + body.get("id") +  " has been approved");
+			return;
+		}
+		
+		context.status(400);
+		context.result("Sorry, that ticket is no longer pending.");
+		
 	};
 	
-	
-	
-	
-/*	
+
 	public Handler handleUpdate = (context) -> {
 		
 		Map<String, T> body = om.readValue(context.body(), LinkedHashMap.class);
@@ -99,7 +138,7 @@ public class TicketController {
 		context.status(200);
 		context.result("Ticket was updated");
 	};
-	*/
+	
 	
 	
 	public Handler handleDelete = (context) -> {
@@ -114,7 +153,7 @@ public class TicketController {
 		
 		
 	};
-	/*
+	
 	public Handler handleUpdateTicketStatus = (context) -> {
 		Ticket t = om.readValue(context.body(), Ticket.class);
 		System.out.println(t);
